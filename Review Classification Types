@@ -1,0 +1,625 @@
+/ AI-Powered Review Classification System Type Definitions
+// This file demonstrates how to structure TypeScript interfaces for a review analysis system
+
+// ============================================================================
+// CORE REVIEW DATA INTERFACES
+// ============================================================================
+
+/**
+ * Represents the basic structure of a review input
+ * This interface defines the essential properties needed for review processing
+ */
+interface ReviewInput {
+  /** Unique identifier for the review */
+  id: string;
+  /** The review text content */
+  text: string;
+  /** Language of the review */
+  language: string;
+  /** Source platform where the review was posted */
+  platform: ReviewPlatform;
+  /** Rating given by the user (1-5 stars) */
+  rating?: number;
+  /** When the review was posted */
+  timestamp?: Date;
+  /** Optional metadata about the review */
+  metadata?: ReviewMetadata;
+}
+
+/**
+ * Supported review platforms
+ * Using a union type ensures type safety when specifying platforms
+ */
+type ReviewPlatform = 
+  | 'amazon' 
+  | 'google' 
+  | 'yelp' 
+  | 'tripadvisor' 
+  | 'trustpilot' 
+  | 'facebook' 
+  | 'app_store' 
+  | 'play_store' 
+  | 'custom';
+
+/**
+ * Optional metadata that can be attached to reviews
+ * This allows for additional context without cluttering the main interface
+ */
+interface ReviewMetadata {
+  /** Product or service being reviewed */
+  productId?: string;
+  /** Category of the product/service */
+  category?: string;
+  /** User identifier */
+  userId?: string;
+  /** Whether the user is verified */
+  isVerified?: boolean;
+  /** Number of helpful votes */
+  helpfulVotes?: number;
+  /** Custom tags or labels */
+  tags?: string[];
+  /** Geographic location */
+  location?: GeoLocation;
+}
+
+/**
+ * Geographic location data
+ * Useful for location-aware analysis features
+ */
+interface GeoLocation {
+  country?: string;
+  state?: string;
+  city?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+// ============================================================================
+// CLASSIFICATION RESULT INTERFACES
+// ============================================================================
+
+/**
+ * Main result interface for review classification
+ * Contains all the information returned by the AI model
+ */
+interface ReviewClassificationResult {
+  /** Unique identifier for this classification result */
+  id: string;
+  /** The original review input that was processed */
+  reviewInput: ReviewInput;
+  /** Overall sentiment classification */
+  sentiment: SentimentClassification;
+  /** Detected topics/themes in the review */
+  topics: DetectedTopic[];
+  /** Detected entities (products, features, etc.) */
+  entities: DetectedEntity[];
+  /** Intent classification (complaint, praise, question, etc.) */
+  intent: IntentClassification;
+  /** Emotion analysis */
+  emotions: EmotionAnalysis[];
+  /** Overall confidence score for the classification */
+  confidence: number;
+  /** Processing time in milliseconds */
+  processingTime: number;
+  /** When the classification was performed */
+  timestamp: Date;
+}
+
+/**
+ * Sentiment classification results
+ * Provides detailed sentiment analysis with confidence scores
+ */
+interface SentimentClassification {
+  /** Primary sentiment category */
+  primary: SentimentType;
+  /** Secondary sentiment categories */
+  secondary?: SentimentType[];
+  /** Overall sentiment score (-1 to 1, negative to positive) */
+  score: number;
+  /** Confidence score for the sentiment classification */
+  confidence: number;
+  /** Sentiment intensity (mild, moderate, strong) */
+  intensity: SentimentIntensity;
+  /** Sentiment polarity breakdown */
+  polarity: SentimentPolarity;
+}
+
+/**
+ * Supported sentiment types
+ */
+type SentimentType = 
+  | 'positive' 
+  | 'negative' 
+  | 'neutral' 
+  | 'mixed';
+
+/**
+ * Sentiment intensity levels
+ */
+type SentimentIntensity = 
+  | 'mild' 
+  | 'moderate' 
+  | 'strong' 
+  | 'extreme';
+
+/**
+ * Detailed sentiment polarity breakdown
+ */
+interface SentimentPolarity {
+  /** Positive sentiment score (0-1) */
+  positive: number;
+  /** Negative sentiment score (0-1) */
+  negative: number;
+  /** Neutral sentiment score (0-1) */
+  neutral: number;
+  /** Mixed sentiment score (0-1) */
+  mixed: number;
+}
+
+/**
+ * Represents a detected topic or theme in the review
+ * This helps categorize what the review is primarily about
+ */
+interface DetectedTopic {
+  /** Topic name or category */
+  name: string;
+  /** Confidence score (0-1) for this topic detection */
+  confidence: number;
+  /** Relevance score (0-1) indicating how central this topic is */
+  relevance: number;
+  /** Sentiment associated with this topic */
+  topicSentiment: SentimentType;
+  /** Keywords that indicate this topic */
+  keywords: string[];
+  /** Hierarchical classification (e.g., "product" -> "electronics" -> "smartphone") */
+  hierarchy?: string[];
+}
+
+/**
+ * Represents a detected entity in the review
+ * These are specific products, features, or concepts mentioned
+ */
+interface DetectedEntity {
+  /** Entity name or identifier */
+  name: string;
+  /** Type of entity */
+  type: EntityType;
+  /** Confidence score (0-1) for this entity detection */
+  confidence: number;
+  /** Sentiment associated with this entity */
+  entitySentiment: SentimentType;
+  /** Position in the text where entity was found */
+  position: TextPosition;
+  /** Optional attributes of the entity */
+  attributes?: EntityAttributes;
+}
+
+/**
+ * Supported entity types
+ */
+type EntityType = 
+  | 'product' 
+  | 'feature' 
+  | 'service' 
+  | 'person' 
+  | 'company' 
+  | 'location' 
+  | 'price' 
+  | 'time' 
+  | 'quantity';
+
+/**
+ * Position information for text-based entities
+ */
+interface TextPosition {
+  /** Start character position */
+  start: number;
+  /** End character position */
+  end: number;
+  /** Line number if applicable */
+  line?: number;
+}
+
+/**
+ * Additional attributes that can be detected for entities
+ */
+interface EntityAttributes {
+  /** Brand or manufacturer */
+  brand?: string;
+  /** Model or version */
+  model?: string;
+  /** Price information */
+  price?: PriceInfo;
+  /** Quality rating */
+  quality?: number;
+  /** Condition or state */
+  condition?: string;
+}
+
+/**
+ * Price information for entities
+ */
+interface PriceInfo {
+  /** Price amount */
+  amount: number;
+  /** Currency code */
+  currency: string;
+  /** Whether it's a range */
+  isRange?: boolean;
+  /** Maximum price if it's a range */
+  maxAmount?: number;
+}
+
+/**
+ * Intent classification results
+ * Identifies the primary purpose or intent of the review
+ */
+interface IntentClassification {
+  /** Primary intent category */
+  primary: IntentType;
+  /** Secondary intent categories */
+  secondary?: IntentType[];
+  /** Confidence score for the intent classification */
+  confidence: number;
+  /** Intent intensity (mild, moderate, strong) */
+  intensity: IntentIntensity;
+}
+
+/**
+ * Supported intent types
+ */
+type IntentType = 
+  | 'complaint' 
+  | 'praise' 
+  | 'question' 
+  | 'recommendation' 
+  | 'warning' 
+  | 'comparison' 
+  | 'request' 
+  | 'feedback' 
+  | 'review';
+
+/**
+ * Intent intensity levels
+ */
+type IntentIntensity = 
+  | 'mild' 
+  | 'moderate' 
+  | 'strong' 
+  | 'urgent';
+
+/**
+ * Emotion analysis results
+ * Identifies specific emotions expressed in the review
+ */
+interface EmotionAnalysis {
+  /** Type of emotion */
+  emotion: EmotionType;
+  /** Confidence score for this emotion */
+  confidence: number;
+  /** Intensity of the emotion (0-1) */
+  intensity: number;
+  /** Position in text where emotion was detected */
+  position?: TextPosition;
+}
+
+/**
+ * Supported emotion types
+ */
+type EmotionType = 
+  | 'joy' 
+  | 'sadness' 
+  | 'anger' 
+  | 'fear' 
+  | 'surprise' 
+  | 'disgust' 
+  | 'trust' 
+  | 'anticipation' 
+  | 'frustration' 
+  | 'satisfaction' 
+  | 'disappointment' 
+  | 'excitement';
+
+// ============================================================================
+// MODEL CONFIGURATION INTERFACES
+// ============================================================================
+
+/**
+ * Configuration for the review classification model
+ */
+interface ModelConfiguration {
+  /** Which AI model to use */
+  model: ModelType;
+  /** Minimum confidence threshold for classifications */
+  confidenceThreshold: number;
+  /** Maximum number of topics to detect */
+  maxTopics?: number;
+  /** Maximum number of entities to detect */
+  maxEntities?: number;
+  /** Whether to enable emotion analysis */
+  enableEmotionAnalysis: boolean;
+  /** Whether to enable intent classification */
+  enableIntentClassification: boolean;
+  /** Whether to enable entity detection */
+  enableEntityDetection: boolean;
+  /** Processing options */
+  options: ProcessingOptions;
+}
+
+/**
+ * Supported model types for review classification
+ */
+type ModelType = 
+  | 'gpt-4' 
+  | 'gpt-3.5-turbo' 
+  | 'claude-3-sonnet' 
+  | 'claude-3-haiku' 
+  | 'custom-sentiment' 
+  | 'bert-sentiment' 
+  | 'roberta-sentiment';
+
+/**
+ * Processing options for the classification system
+ */
+interface ProcessingOptions {
+  /** Whether to use GPU acceleration */
+  useGPU: boolean;
+  /** Text preprocessing steps */
+  preprocessing: PreprocessingOptions;
+  /** Post-processing filters */
+  postprocessing: PostprocessingOptions;
+}
+
+/**
+ * Text preprocessing options
+ */
+interface PreprocessingOptions {
+  /** Whether to remove stop words */
+  removeStopWords: boolean;
+  /** Whether to perform lemmatization */
+  lemmatize: boolean;
+  /** Whether to convert to lowercase */
+  toLowerCase: boolean;
+  /** Whether to remove punctuation */
+  removePunctuation: boolean;
+  /** Whether to remove numbers */
+  removeNumbers: boolean;
+  /** Maximum text length to process */
+  maxLength?: number;
+}
+
+/**
+ * Post-processing options
+ */
+interface PostprocessingOptions {
+  /** Whether to filter low-confidence results */
+  filterLowConfidence: boolean;
+  /** Whether to merge similar topics */
+  mergeSimilarTopics: boolean;
+  /** Similarity threshold for merging */
+  similarityThreshold: number;
+  /** Whether to normalize confidence scores */
+  normalizeConfidence: boolean;
+  /** Whether to apply sentiment smoothing */
+  applySentimentSmoothing: boolean;
+}
+
+// ============================================================================
+// SERVICE INTERFACES
+// ============================================================================
+
+/**
+ * Main service interface for review classification
+ */
+interface ReviewClassificationService {
+  /** Classify a single review */
+  classifyReview(review: ReviewInput, config?: ModelConfiguration): Promise<ReviewClassificationResult>;
+  
+  /** Classify multiple reviews in batch */
+  classifyBatch(reviews: ReviewInput[], config?: ModelConfiguration): Promise<ReviewClassificationResult[]>;
+  
+  /** Get system status and health */
+  getStatus(): Promise<SystemStatus>;
+  
+  /** Update model configuration */
+  updateConfiguration(config: ModelConfiguration): Promise<void>;
+}
+
+/**
+ * System status information
+ */
+interface SystemStatus {
+  /** Whether the system is operational */
+  isHealthy: boolean;
+  /** Current model being used */
+  activeModel: ModelType;
+  /** System uptime in seconds */
+  uptime: number;
+  /** Memory usage in MB */
+  memoryUsage: number;
+  /** GPU usage percentage if available */
+  gpuUsage?: number;
+  /** Number of pending requests */
+  pendingRequests: number;
+  /** Average processing time in milliseconds */
+  averageProcessingTime: number;
+  /** Number of reviews processed today */
+  reviewsProcessedToday: number;
+}
+
+// ============================================================================
+// ERROR HANDLING INTERFACES
+// ============================================================================
+
+/**
+ * Error information for classification failures
+ */
+interface ClassificationError {
+  /** Error code for programmatic handling */
+  code: ErrorCode;
+  /** Human-readable error message */
+  message: string;
+  /** Additional error details */
+  details?: Record<string, any>;
+  /** When the error occurred */
+  timestamp: Date;
+}
+
+/**
+ * Supported error codes
+ */
+type ErrorCode = 
+  | 'INVALID_TEXT_FORMAT'
+  | 'TEXT_TOO_LONG'
+  | 'MODEL_NOT_AVAILABLE'
+  | 'PROCESSING_TIMEOUT'
+  | 'INSUFFICIENT_MEMORY'
+  | 'GPU_ERROR'
+  | 'NETWORK_ERROR'
+  | 'LANGUAGE_NOT_SUPPORTED'
+  | 'UNKNOWN_ERROR';
+
+// ============================================================================
+// EVENT HANDLING INTERFACES
+// ============================================================================
+
+/**
+ * Event information for system monitoring
+ */
+interface ClassificationEvent {
+  /** Type of event */
+  type: EventType;
+  /** Event data */
+  data: any;
+  /** When the event occurred */
+  timestamp: Date;
+}
+
+/**
+ * Supported event types
+ */
+type EventType = 
+  | 'CLASSIFICATION_STARTED'
+  | 'CLASSIFICATION_COMPLETED'
+  | 'CLASSIFICATION_FAILED'
+  | 'MODEL_LOADED'
+  | 'SYSTEM_ERROR'
+  | 'BATCH_PROCESSING_STARTED'
+  | 'BATCH_PROCESSING_COMPLETED';
+
+// ============================================================================
+// REQUEST/RESPONSE INTERFACES
+// ============================================================================
+
+/**
+ * Request structure for classification
+ */
+interface ClassificationRequest {
+  /** Request ID for tracking */
+  requestId: string;
+  /** Review data to process */
+  review: ReviewInput;
+  /** Optional configuration override */
+  configuration?: Partial<ModelConfiguration>;
+  /** Request metadata */
+  metadata?: RequestMetadata;
+}
+
+/**
+ * Response structure for classification
+ */
+interface ClassificationResponse {
+  /** Request ID for correlation */
+  requestId: string;
+  /** Classification results */
+  result: ReviewClassificationResult;
+  /** Processing metadata */
+  metadata: ResponseMetadata;
+}
+
+/**
+ * Request metadata
+ */
+interface RequestMetadata {
+  /** Client application identifier */
+  clientId?: string;
+  /** User identifier */
+  userId?: string;
+  /** Request priority */
+  priority?: 'low' | 'normal' | 'high';
+  /** Expected response time in seconds */
+  expectedResponseTime?: number;
+  /** Batch ID if part of a batch request */
+  batchId?: string;
+}
+
+/**
+ * Response metadata
+ */
+interface ResponseMetadata {
+  /** Total processing time */
+  processingTime: number;
+  /** Model version used */
+  modelVersion: string;
+  /** Whether GPU was used */
+  gpuUsed: boolean;
+  /** Cache hit/miss information */
+  cacheStatus: 'hit' | 'miss' | 'disabled';
+  /** Number of tokens processed */
+  tokensProcessed?: number;
+}
+
+// ============================================================================
+// EXPORT ALL INTERFACES
+// ============================================================================
+
+export {
+  // Core interfaces
+  ReviewInput,
+  ReviewPlatform,
+  ReviewMetadata,
+  GeoLocation,
+  
+  // Classification results
+  ReviewClassificationResult,
+  SentimentClassification,
+  SentimentType,
+  SentimentIntensity,
+  SentimentPolarity,
+  DetectedTopic,
+  DetectedEntity,
+  EntityType,
+  TextPosition,
+  EntityAttributes,
+  PriceInfo,
+  IntentClassification,
+  IntentType,
+  IntentIntensity,
+  EmotionAnalysis,
+  EmotionType,
+  
+  // Model configuration
+  ModelConfiguration,
+  ModelType,
+  ProcessingOptions,
+  PreprocessingOptions,
+  PostprocessingOptions,
+  
+  // Service interfaces
+  ReviewClassificationService,
+  SystemStatus,
+  
+  // Error handling
+  ClassificationError,
+  ErrorCode,
+  
+  // Event handling
+  ClassificationEvent,
+  EventType,
+  
+  // Request/Response
+  ClassificationRequest,
+  ClassificationResponse,
+  RequestMetadata,
+  ResponseMetadata
+}; 
