@@ -1,0 +1,366 @@
+// Review Classification System - Usage Examples
+// This file demonstrates how to work with the review classification types and mock data
+
+import {
+  ReviewInput,
+  ReviewClassificationResult,
+  SentimentType,
+  IntentType,
+  EntityType,
+  ReviewPlatform,
+  ModelConfiguration,
+  ProcessingOptions,
+  PreprocessingOptions,
+  PostprocessingOptions
+} from './review_classification_types';
+
+import {
+  mockReviewInputs,
+  mockClassificationResults,
+  getClassificationResultByReviewId,
+  getClassificationResultsBySentiment,
+  getClassificationResultsByPlatform,
+  getHighConfidenceResults
+} from './review_classification_mock_data';
+
+// ============================================================================
+// BASIC USAGE EXAMPLES
+// ============================================================================
+
+/**
+ * Example 1: Basic review input creation
+ * Demonstrates how to create a review input with proper typing
+ */
+function createReviewInputExample(): ReviewInput {
+  const reviewInput: ReviewInput = {
+    id: 'example_review_001',
+    text: 'This product is amazing! The quality is outstanding and the customer service was excellent. Highly recommend!',
+    language: 'en',
+    platform: 'amazon',
+    rating: 5,
+    timestamp: new Date(),
+    metadata: {
+      productId: 'product_123',
+      category: 'electronics',
+      userId: 'user_456',
+      isVerified: true,
+      helpfulVotes: 10,
+      tags: ['quality', 'recommendation'],
+      location: {
+        country: 'US',
+        state: 'California',
+        city: 'Los Angeles'
+      }
+    }
+  };
+  
+  return reviewInput;
+}
+
+/**
+ * Example 2: Working with classification results
+ * Shows how to analyze and extract information from AI classification results
+ */
+function analyzeClassificationResults(): void {
+  console.log('=== Review Classification Analysis ===\n');
+  
+  // Get all positive reviews
+  const positiveReviews = getClassificationResultsBySentiment('positive');
+  console.log(`Found ${positiveReviews.length} positive reviews`);
+  
+  // Get all negative reviews
+  const negativeReviews = getClassificationResultsBySentiment('negative');
+  console.log(`Found ${negativeReviews.length} negative reviews`);
+  
+  // Get high confidence results
+  const highConfidenceResults = getHighConfidenceResults(0.9);
+  console.log(`Found ${highConfidenceResults.length} high confidence results (>= 90%)\n`);
+  
+  // Analyze a specific review
+  const specificResult = getClassificationResultByReviewId('review_001');
+  if (specificResult) {
+    console.log('=== Specific Review Analysis ===');
+    console.log(`Review ID: ${specificResult.reviewInput.id}`);
+    console.log(`Platform: ${specificResult.reviewInput.platform}`);
+    console.log(`Rating: ${specificResult.reviewInput.rating}/5`);
+    console.log(`Sentiment: ${specificResult.sentiment.primary} (${(specificResult.sentiment.score * 100).toFixed(1)}%)`);
+    console.log(`Confidence: ${(specificResult.confidence * 100).toFixed(1)}%`);
+    console.log(`Intent: ${specificResult.intent.primary}`);
+    console.log(`Processing Time: ${specificResult.processingTime}ms`);
+    
+    console.log('\n=== Detected Topics ===');
+    specificResult.topics.forEach((topic, index) => {
+      console.log(`${index + 1}. ${topic.name} (${(topic.confidence * 100).toFixed(1)}% confidence)`);
+      console.log(`   Keywords: ${topic.keywords.join(', ')}`);
+      console.log(`   Sentiment: ${topic.topicSentiment}`);
+    });
+    
+    console.log('\n=== Detected Entities ===');
+    specificResult.entities.forEach((entity, index) => {
+      console.log(`${index + 1}. ${entity.name} (${entity.type})`);
+      console.log(`   Confidence: ${(entity.confidence * 100).toFixed(1)}%`);
+      console.log(`   Sentiment: ${entity.entitySentiment}`);
+      if (entity.attributes?.quality) {
+        console.log(`   Quality: ${entity.attributes.quality}/5`);
+      }
+    });
+    
+    console.log('\n=== Emotions Detected ===');
+    specificResult.emotions.forEach((emotion, index) => {
+      console.log(`${index + 1}. ${emotion.emotion} (${(emotion.confidence * 100).toFixed(1)}% confidence, ${(emotion.intensity * 100).toFixed(1)}% intensity)`);
+    });
+  }
+}
+
+/**
+ * Example 3: Platform-specific analysis
+ * Demonstrates how to analyze reviews by platform
+ */
+function analyzeByPlatform(): void {
+  console.log('\n=== Platform Analysis ===\n');
+  
+  const platforms: ReviewPlatform[] = ['amazon', 'trustpilot', 'yelp', 'app_store', 'google'];
+  
+  platforms.forEach(platform => {
+    const platformResults = getClassificationResultsByPlatform(platform);
+    if (platformResults.length > 0) {
+      console.log(`${platform.toUpperCase()}:`);
+      console.log(`  Total reviews: ${platformResults.length}`);
+      
+      const avgConfidence = platformResults.reduce((sum, result) => sum + result.confidence, 0) / platformResults.length;
+      console.log(`  Average confidence: ${(avgConfidence * 100).toFixed(1)}%`);
+      
+      const avgProcessingTime = platformResults.reduce((sum, result) => sum + result.processingTime, 0) / platformResults.length;
+      console.log(`  Average processing time: ${avgProcessingTime.toFixed(0)}ms`);
+      
+      const sentimentCounts = platformResults.reduce((counts, result) => {
+        counts[result.sentiment.primary] = (counts[result.sentiment.primary] || 0) + 1;
+        return counts;
+      }, {} as Record<SentimentType, number>);
+      
+      console.log(`  Sentiment distribution:`, sentimentCounts);
+      console.log('');
+    }
+  });
+}
+
+/**
+ * Example 4: Model configuration setup
+ * Shows how to configure the AI model for different use cases
+ */
+function createModelConfigurations(): void {
+  console.log('=== Model Configuration Examples ===\n');
+  
+  // High-precision configuration for critical analysis
+  const highPrecisionConfig: ModelConfiguration = {
+    model: 'gpt-4',
+    confidenceThreshold: 0.9,
+    maxTopics: 5,
+    maxEntities: 10,
+    enableEmotionAnalysis: true,
+    enableIntentClassification: true,
+    enableEntityDetection: true,
+    options: {
+      useGPU: true,
+      preprocessing: {
+        removeStopWords: true,
+        lemmatize: true,
+        toLowerCase: true,
+        removePunctuation: false,
+        removeNumbers: false,
+        maxLength: 1000
+      },
+      postprocessing: {
+        filterLowConfidence: true,
+        mergeSimilarTopics: true,
+        similarityThreshold: 0.8,
+        normalizeConfidence: true,
+        applySentimentSmoothing: true
+      }
+    }
+  };
+  
+  // Fast processing configuration for real-time analysis
+  const fastProcessingConfig: ModelConfiguration = {
+    model: 'gpt-3.5-turbo',
+    confidenceThreshold: 0.7,
+    maxTopics: 3,
+    maxEntities: 5,
+    enableEmotionAnalysis: false,
+    enableIntentClassification: true,
+    enableEntityDetection: true,
+    options: {
+      useGPU: false,
+      preprocessing: {
+        removeStopWords: false,
+        lemmatize: false,
+        toLowerCase: true,
+        removePunctuation: false,
+        removeNumbers: false,
+        maxLength: 500
+      },
+      postprocessing: {
+        filterLowConfidence: true,
+        mergeSimilarTopics: false,
+        similarityThreshold: 0.9,
+        normalizeConfidence: false,
+        applySentimentSmoothing: false
+      }
+    }
+  };
+  
+  console.log('High Precision Config:');
+  console.log(`  Model: ${highPrecisionConfig.model}`);
+  console.log(`  Confidence Threshold: ${highPrecisionConfig.confidenceThreshold}`);
+  console.log(`  GPU Enabled: ${highPrecisionConfig.options.useGPU}`);
+  console.log(`  Emotion Analysis: ${highPrecisionConfig.enableEmotionAnalysis}`);
+  
+  console.log('\nFast Processing Config:');
+  console.log(`  Model: ${fastProcessingConfig.model}`);
+  console.log(`  Confidence Threshold: ${fastProcessingConfig.confidenceThreshold}`);
+  console.log(`  GPU Enabled: ${fastProcessingConfig.options.useGPU}`);
+  console.log(`  Emotion Analysis: ${fastProcessingConfig.enableEmotionAnalysis}`);
+}
+
+/**
+ * Example 5: Statistical analysis of classification results
+ * Demonstrates how to perform statistical analysis on the results
+ */
+function performStatisticalAnalysis(): void {
+  console.log('\n=== Statistical Analysis ===\n');
+  
+  const results = mockClassificationResults;
+  
+  // Calculate overall statistics
+  const totalReviews = results.length;
+  const avgConfidence = results.reduce((sum, result) => sum + result.confidence, 0) / totalReviews;
+  const avgProcessingTime = results.reduce((sum, result) => sum + result.processingTime, 0) / totalReviews;
+  
+  // Sentiment distribution
+  const sentimentDistribution = results.reduce((dist, result) => {
+    dist[result.sentiment.primary] = (dist[result.sentiment.primary] || 0) + 1;
+    return dist;
+  }, {} as Record<SentimentType, number>);
+  
+  // Intent distribution
+  const intentDistribution = results.reduce((dist, result) => {
+    dist[result.intent.primary] = (dist[result.intent.primary] || 0) + 1;
+    return dist;
+  }, {} as Record<IntentType, number>);
+  
+  // Entity type distribution
+  const entityTypeDistribution = results.reduce((dist, result) => {
+    result.entities.forEach(entity => {
+      dist[entity.type] = (dist[entity.type] || 0) + 1;
+    });
+    return dist;
+  }, {} as Record<EntityType, number>);
+  
+  console.log('Overall Statistics:');
+  console.log(`  Total Reviews: ${totalReviews}`);
+  console.log(`  Average Confidence: ${(avgConfidence * 100).toFixed(1)}%`);
+  console.log(`  Average Processing Time: ${avgProcessingTime.toFixed(0)}ms`);
+  
+  console.log('\nSentiment Distribution:');
+  Object.entries(sentimentDistribution).forEach(([sentiment, count]) => {
+    const percentage = ((count / totalReviews) * 100).toFixed(1);
+    console.log(`  ${sentiment}: ${count} (${percentage}%)`);
+  });
+  
+  console.log('\nIntent Distribution:');
+  Object.entries(intentDistribution).forEach(([intent, count]) => {
+    const percentage = ((count / totalReviews) * 100).toFixed(1);
+    console.log(`  ${intent}: ${count} (${percentage}%)`);
+  });
+  
+  console.log('\nEntity Type Distribution:');
+  const totalEntities = Object.values(entityTypeDistribution).reduce((sum, count) => sum + count, 0);
+  Object.entries(entityTypeDistribution).forEach(([entityType, count]) => {
+    const percentage = ((count / totalEntities) * 100).toFixed(1);
+    console.log(`  ${entityType}: ${count} (${percentage}%)`);
+  });
+}
+
+/**
+ * Example 6: Quality assessment of classification results
+ * Demonstrates how to assess the quality and reliability of results
+ */
+function assessClassificationQuality(): void {
+  console.log('\n=== Quality Assessment ===\n');
+  
+  const results = mockClassificationResults;
+  
+  // High confidence results
+  const highConfidence = results.filter(r => r.confidence >= 0.9);
+  const mediumConfidence = results.filter(r => r.confidence >= 0.7 && r.confidence < 0.9);
+  const lowConfidence = results.filter(r => r.confidence < 0.7);
+  
+  console.log('Confidence Distribution:');
+  console.log(`  High (≥90%): ${highConfidence.length} reviews`);
+  console.log(`  Medium (70-89%): ${mediumConfidence.length} reviews`);
+  console.log(`  Low (<70%): ${lowConfidence.length} reviews`);
+  
+  // Processing time analysis
+  const fastProcessing = results.filter(r => r.processingTime < 1000);
+  const mediumProcessing = results.filter(r => r.processingTime >= 1000 && r.processingTime < 1500);
+  const slowProcessing = results.filter(r => r.processingTime >= 1500);
+  
+  console.log('\nProcessing Time Distribution:');
+  console.log(`  Fast (<1s): ${fastProcessing.length} reviews`);
+  console.log(`  Medium (1-1.5s): ${mediumProcessing.length} reviews`);
+  console.log(`  Slow (>1.5s): ${slowProcessing.length} reviews`);
+  
+  // Sentiment confidence analysis
+  const sentimentConfidence = results.map(r => ({
+    sentiment: r.sentiment.primary,
+    confidence: r.sentiment.confidence
+  }));
+  
+  const avgSentimentConfidence = sentimentConfidence.reduce((sum, item) => sum + item.confidence, 0) / sentimentConfidence.length;
+  console.log(`\nAverage Sentiment Confidence: ${(avgSentimentConfidence * 100).toFixed(1)}%`);
+  
+  // Topic detection analysis
+  const totalTopics = results.reduce((sum, r) => sum + r.topics.length, 0);
+  const avgTopicsPerReview = totalTopics / results.length;
+  console.log(`Average Topics per Review: ${avgTopicsPerReview.toFixed(1)}`);
+  
+  // Entity detection analysis
+  const totalEntities = results.reduce((sum, r) => sum + r.entities.length, 0);
+  const avgEntitiesPerReview = totalEntities / results.length;
+  console.log(`Average Entities per Review: ${avgEntitiesPerReview.toFixed(1)}`);
+}
+
+// ============================================================================
+// MAIN EXECUTION
+// ============================================================================
+
+/**
+ * Run all examples
+ */
+function runAllExamples(): void {
+  console.log('🚀 Review Classification System Examples\n');
+  
+  // Create a sample review input
+  const sampleReview = createReviewInputExample();
+  console.log('Sample Review Input Created:', sampleReview.id);
+  
+  // Run all analysis examples
+  analyzeClassificationResults();
+  analyzeByPlatform();
+  createModelConfigurations();
+  performStatisticalAnalysis();
+  assessClassificationQuality();
+  
+  console.log('\n✅ All examples completed successfully!');
+}
+
+// Export functions for external use
+export {
+  createReviewInputExample,
+  analyzeClassificationResults,
+  analyzeByPlatform,
+  createModelConfigurations,
+  performStatisticalAnalysis,
+  assessClassificationQuality,
+  runAllExamples
+};
