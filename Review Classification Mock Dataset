@@ -1,0 +1,1206 @@
+// Mock AI Analysis Results for Review Classification System
+// This file demonstrates realistic mock data for testing and development
+
+import {
+  ReviewInput,
+  ReviewClassificationResult,
+  SentimentClassification,
+  DetectedTopic,
+  DetectedEntity,
+  IntentClassification,
+  EmotionAnalysis,
+  SentimentType,
+  SentimentIntensity,
+  SentimentPolarity,
+  EntityType,
+  IntentType,
+  IntentIntensity,
+  EmotionType,
+  TextPosition,
+  EntityAttributes,
+  PriceInfo,
+  ReviewPlatform,
+  GeoLocation,
+  ReviewMetadata
+} from './review_classification_types';
+
+// ============================================================================
+// MOCK REVIEW INPUTS
+// ============================================================================
+
+/**
+ * Mock review inputs representing real-world scenarios
+ * These demonstrate different types of reviews across various platforms
+ */
+export const mockReviewInputs: ReviewInput[] = [
+  // Positive product review
+  {
+    id: 'review_001',
+    text: 'Absolutely love this smartphone! The camera quality is incredible and the battery life lasts all day. The design is sleek and modern. Worth every penny of the $999 price tag. Highly recommend to anyone looking for a premium device.',
+    language: 'en',
+    platform: 'amazon',
+    rating: 5,
+    timestamp: new Date('2024-01-15T10:30:00Z'),
+    metadata: {
+      productId: 'smartphone_xyz_123',
+      category: 'electronics',
+      userId: 'user_456',
+      isVerified: true,
+      helpfulVotes: 23,
+      tags: ['smartphone', 'camera', 'battery'],
+      location: {
+        country: 'US',
+        state: 'California',
+        city: 'San Francisco'
+      }
+    }
+  },
+
+  // Negative service review
+  {
+    id: 'review_002',
+    text: 'Terrible customer service! I waited on hold for 45 minutes only to be transferred to someone who couldn\'t help me. The representative was rude and unprofessional. I\'ve been a customer for 5 years and this is the worst experience I\'ve ever had. Do not recommend this company.',
+    language: 'en',
+    platform: 'trustpilot',
+    rating: 1,
+    timestamp: new Date('2024-01-14T15:45:00Z'),
+    metadata: {
+      productId: 'service_abc_789',
+      category: 'customer_service',
+      userId: 'user_789',
+      isVerified: true,
+      helpfulVotes: 15,
+      tags: ['customer_service', 'complaint'],
+      location: {
+        country: 'US',
+        state: 'New York',
+        city: 'New York'
+      }
+    }
+  },
+
+  // Neutral restaurant review
+  {
+    id: 'review_003',
+    text: 'The food was okay, nothing special. The pasta was a bit overcooked and the sauce was bland. Service was average - not too slow but not particularly attentive either. The atmosphere was nice though, good for a casual dinner. Price was reasonable at $25 per person.',
+    language: 'en',
+    platform: 'yelp',
+    rating: 3,
+    timestamp: new Date('2024-01-13T19:20:00Z'),
+    metadata: {
+      productId: 'restaurant_italian_456',
+      category: 'restaurant',
+      userId: 'user_123',
+      isVerified: false,
+      helpfulVotes: 2,
+      tags: ['restaurant', 'italian', 'pasta'],
+      location: {
+        country: 'US',
+        state: 'Texas',
+        city: 'Austin'
+      }
+    }
+  },
+
+  // Mixed sentiment app review
+  {
+    id: 'review_004',
+    text: 'Great app overall! The interface is intuitive and the features are exactly what I needed. However, it crashes occasionally and the latest update removed some useful features. The developer support is responsive though. I hope they fix the bugs soon.',
+    language: 'en',
+    platform: 'app_store',
+    rating: 4,
+    timestamp: new Date('2024-01-12T08:15:00Z'),
+    metadata: {
+      productId: 'app_productivity_789',
+      category: 'productivity',
+      userId: 'user_321',
+      isVerified: true,
+      helpfulVotes: 8,
+      tags: ['app', 'productivity', 'bugs'],
+      location: {
+        country: 'Canada',
+        state: 'Ontario',
+        city: 'Toronto'
+      }
+    }
+  },
+
+  // Question/Inquiry review
+  {
+    id: 'review_005',
+    text: 'Does this product come with a warranty? I\'m interested in buying it but want to make sure I\'m covered if something goes wrong. Also, what\'s the return policy? Thanks in advance for any information!',
+    language: 'en',
+    platform: 'amazon',
+    rating: undefined,
+    timestamp: new Date('2024-01-11T12:00:00Z'),
+    metadata: {
+      productId: 'product_warranty_123',
+      category: 'electronics',
+      userId: 'user_654',
+      isVerified: false,
+      helpfulVotes: 0,
+      tags: ['warranty', 'question'],
+      location: {
+        country: 'UK',
+        city: 'London'
+      }
+    }
+  },
+
+  // Strong positive review with emotions
+  {
+    id: 'review_006',
+    text: 'I am absolutely thrilled with this purchase! The quality exceeded my expectations and the customer service team went above and beyond to help me. This is exactly what I was looking for and I couldn\'t be happier. Thank you so much for such an amazing product!',
+    language: 'en',
+    platform: 'google',
+    rating: 5,
+    timestamp: new Date('2024-01-10T16:30:00Z'),
+    metadata: {
+      productId: 'product_amazing_456',
+      category: 'home_goods',
+      userId: 'user_987',
+      isVerified: true,
+      helpfulVotes: 31,
+      tags: ['quality', 'customer_service', 'satisfaction'],
+      location: {
+        country: 'Australia',
+        state: 'New South Wales',
+        city: 'Sydney'
+      }
+    }
+  },
+
+  // Complaint with specific issues
+  {
+    id: 'review_007',
+    text: 'Ordered this item on December 15th and it still hasn\'t arrived. The tracking shows it\'s been stuck in transit for 3 weeks. I\'ve called customer service 5 times and they keep saying "it\'s on its way" but can\'t give me any real updates. This is unacceptable for a $200 purchase.',
+    language: 'en',
+    platform: 'amazon',
+    rating: 1,
+    timestamp: new Date('2024-01-09T14:20:00Z'),
+    metadata: {
+      productId: 'product_shipping_789',
+      category: 'shipping',
+      userId: 'user_147',
+      isVerified: true,
+      helpfulVotes: 12,
+      tags: ['shipping', 'delivery', 'complaint'],
+      location: {
+        country: 'US',
+        state: 'Florida',
+        city: 'Miami'
+      }
+    }
+  },
+
+  // Comparison review
+  {
+    id: 'review_008',
+    text: 'Compared this to the competitor\'s model and this one wins hands down. Better battery life, more features, and the price is actually lower. The only downside is the slightly larger size, but it\'s worth it for the performance. Definitely recommend this over the other options.',
+    language: 'en',
+    platform: 'bestbuy',
+    rating: 5,
+    timestamp: new Date('2024-01-08T11:45:00Z'),
+    metadata: {
+      productId: 'product_comparison_321',
+      category: 'electronics',
+      userId: 'user_258',
+      isVerified: true,
+      helpfulVotes: 19,
+      tags: ['comparison', 'battery', 'performance'],
+      location: {
+        country: 'US',
+        state: 'Washington',
+        city: 'Seattle'
+      }
+    }
+  }
+];
+
+// ============================================================================
+// MOCK AI CLASSIFICATION RESULTS
+// ============================================================================
+
+/**
+ * Mock AI classification results corresponding to the review inputs
+ * These demonstrate realistic AI analysis outputs with various confidence levels
+ */
+export const mockClassificationResults: ReviewClassificationResult[] = [
+  // Result for review_001 (Positive smartphone review)
+  {
+    id: 'classification_001',
+    reviewInput: mockReviewInputs[0],
+    sentiment: {
+      primary: 'positive',
+      secondary: ['excited'],
+      score: 0.92,
+      confidence: 0.95,
+      intensity: 'strong',
+      polarity: {
+        positive: 0.92,
+        negative: 0.03,
+        neutral: 0.04,
+        mixed: 0.01
+      }
+    },
+    topics: [
+      {
+        name: 'smartphone_features',
+        confidence: 0.94,
+        relevance: 0.89,
+        topicSentiment: 'positive',
+        keywords: ['smartphone', 'camera', 'battery', 'design'],
+        hierarchy: ['electronics', 'mobile_devices', 'smartphones']
+      },
+      {
+        name: 'product_quality',
+        confidence: 0.87,
+        relevance: 0.76,
+        topicSentiment: 'positive',
+        keywords: ['quality', 'premium', 'worth', 'recommend'],
+        hierarchy: ['product_evaluation', 'quality_assessment']
+      },
+      {
+        name: 'pricing',
+        confidence: 0.82,
+        relevance: 0.65,
+        topicSentiment: 'positive',
+        keywords: ['price', 'worth', 'premium'],
+        hierarchy: ['financial', 'pricing']
+      }
+    ],
+    entities: [
+      {
+        name: 'smartphone',
+        type: 'product',
+        confidence: 0.96,
+        entitySentiment: 'positive',
+        position: { start: 25, end: 35 },
+        attributes: {
+          brand: 'generic',
+          model: 'premium',
+          quality: 5
+        }
+      },
+      {
+        name: 'camera',
+        type: 'feature',
+        confidence: 0.91,
+        entitySentiment: 'positive',
+        position: { start: 45, end: 51 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: 'battery',
+        type: 'feature',
+        confidence: 0.89,
+        entitySentiment: 'positive',
+        position: { start: 65, end: 72 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: '$999',
+        type: 'price',
+        confidence: 0.94,
+        entitySentiment: 'positive',
+        position: { start: 120, end: 124 },
+        attributes: {
+          price: {
+            amount: 999,
+            currency: 'USD'
+          }
+        }
+      }
+    ],
+    intent: {
+      primary: 'praise',
+      secondary: ['recommendation'],
+      confidence: 0.93,
+      intensity: 'strong'
+    },
+    emotions: [
+      {
+        emotion: 'joy',
+        confidence: 0.88,
+        intensity: 0.85,
+        position: { start: 0, end: 15 }
+      },
+      {
+        emotion: 'satisfaction',
+        confidence: 0.92,
+        intensity: 0.90,
+        position: { start: 100, end: 130 }
+      },
+      {
+        emotion: 'excitement',
+        confidence: 0.78,
+        intensity: 0.72,
+        position: { start: 130, end: 150 }
+      }
+    ],
+    confidence: 0.94,
+    processingTime: 1250,
+    timestamp: new Date('2024-01-15T10:31:25Z')
+  },
+
+  // Result for review_002 (Negative service review)
+  {
+    id: 'classification_002',
+    reviewInput: mockReviewInputs[1],
+    sentiment: {
+      primary: 'negative',
+      secondary: ['frustrated'],
+      score: -0.89,
+      confidence: 0.97,
+      intensity: 'strong',
+      polarity: {
+        positive: 0.02,
+        negative: 0.89,
+        neutral: 0.08,
+        mixed: 0.01
+      }
+    },
+    topics: [
+      {
+        name: 'customer_service',
+        confidence: 0.96,
+        relevance: 0.92,
+        topicSentiment: 'negative',
+        keywords: ['customer service', 'representative', 'rude', 'unprofessional'],
+        hierarchy: ['service', 'customer_support']
+      },
+      {
+        name: 'waiting_time',
+        confidence: 0.88,
+        relevance: 0.78,
+        topicSentiment: 'negative',
+        keywords: ['waited', 'hold', '45 minutes', 'transferred'],
+        hierarchy: ['service_issues', 'time_management']
+      },
+      {
+        name: 'customer_experience',
+        confidence: 0.85,
+        relevance: 0.81,
+        topicSentiment: 'negative',
+        keywords: ['worst experience', 'customer', 'years'],
+        hierarchy: ['customer_relations', 'experience']
+      }
+    ],
+    entities: [
+      {
+        name: 'customer service',
+        type: 'service',
+        confidence: 0.95,
+        entitySentiment: 'negative',
+        position: { start: 0, end: 16 },
+        attributes: {
+          quality: 1
+        }
+      },
+      {
+        name: 'representative',
+        type: 'person',
+        confidence: 0.87,
+        entitySentiment: 'negative',
+        position: { start: 85, end: 98 },
+        attributes: {
+          condition: 'rude'
+        }
+      },
+      {
+        name: '5 years',
+        type: 'time',
+        confidence: 0.92,
+        entitySentiment: 'neutral',
+        position: { start: 140, end: 148 }
+      }
+    ],
+    intent: {
+      primary: 'complaint',
+      secondary: ['warning'],
+      confidence: 0.95,
+      intensity: 'strong'
+    },
+    emotions: [
+      {
+        emotion: 'anger',
+        confidence: 0.91,
+        intensity: 0.88,
+        position: { start: 0, end: 20 }
+      },
+      {
+        emotion: 'frustration',
+        confidence: 0.94,
+        intensity: 0.92,
+        position: { start: 20, end: 60 }
+      },
+      {
+        emotion: 'disappointment',
+        confidence: 0.87,
+        intensity: 0.85,
+        position: { start: 120, end: 150 }
+      }
+    ],
+    confidence: 0.96,
+    processingTime: 1180,
+    timestamp: new Date('2024-01-14T15:46:18Z')
+  },
+
+  // Result for review_003 (Neutral restaurant review)
+  {
+    id: 'classification_003',
+    reviewInput: mockReviewInputs[2],
+    sentiment: {
+      primary: 'neutral',
+      secondary: ['mixed'],
+      score: 0.12,
+      confidence: 0.84,
+      intensity: 'mild',
+      polarity: {
+        positive: 0.15,
+        negative: 0.28,
+        neutral: 0.52,
+        mixed: 0.05
+      }
+    },
+    topics: [
+      {
+        name: 'food_quality',
+        confidence: 0.89,
+        relevance: 0.82,
+        topicSentiment: 'negative',
+        keywords: ['food', 'pasta', 'overcooked', 'bland'],
+        hierarchy: ['dining', 'food_evaluation']
+      },
+      {
+        name: 'service_quality',
+        confidence: 0.76,
+        relevance: 0.68,
+        topicSentiment: 'neutral',
+        keywords: ['service', 'average', 'slow', 'attentive'],
+        hierarchy: ['service', 'restaurant_service']
+      },
+      {
+        name: 'atmosphere',
+        confidence: 0.82,
+        relevance: 0.71,
+        topicSentiment: 'positive',
+        keywords: ['atmosphere', 'nice', 'casual'],
+        hierarchy: ['dining', 'ambiance']
+      },
+      {
+        name: 'pricing',
+        confidence: 0.78,
+        relevance: 0.65,
+        topicSentiment: 'positive',
+        keywords: ['price', 'reasonable', '$25'],
+        hierarchy: ['financial', 'pricing']
+      }
+    ],
+    entities: [
+      {
+        name: 'pasta',
+        type: 'product',
+        confidence: 0.85,
+        entitySentiment: 'negative',
+        position: { start: 25, end: 30 },
+        attributes: {
+          condition: 'overcooked'
+        }
+      },
+      {
+        name: 'sauce',
+        type: 'product',
+        confidence: 0.82,
+        entitySentiment: 'negative',
+        position: { start: 40, end: 45 },
+        attributes: {
+          condition: 'bland'
+        }
+      },
+      {
+        name: '$25',
+        type: 'price',
+        confidence: 0.91,
+        entitySentiment: 'positive',
+        position: { start: 180, end: 183 },
+        attributes: {
+          price: {
+            amount: 25,
+            currency: 'USD'
+          }
+        }
+      }
+    ],
+    intent: {
+      primary: 'review',
+      secondary: ['feedback'],
+      confidence: 0.87,
+      intensity: 'moderate'
+    },
+    emotions: [
+      {
+        emotion: 'disappointment',
+        confidence: 0.73,
+        intensity: 0.65,
+        position: { start: 20, end: 50 }
+      },
+      {
+        emotion: 'satisfaction',
+        confidence: 0.68,
+        intensity: 0.60,
+        position: { start: 150, end: 180 }
+      }
+    ],
+    confidence: 0.86,
+    processingTime: 1420,
+    timestamp: new Date('2024-01-13T19:21:42Z')
+  },
+
+  // Result for review_004 (Mixed sentiment app review)
+  {
+    id: 'classification_004',
+    reviewInput: mockReviewInputs[3],
+    sentiment: {
+      primary: 'mixed',
+      secondary: ['positive', 'negative'],
+      score: 0.34,
+      confidence: 0.89,
+      intensity: 'moderate',
+      polarity: {
+        positive: 0.45,
+        negative: 0.38,
+        neutral: 0.12,
+        mixed: 0.05
+      }
+    },
+    topics: [
+      {
+        name: 'app_features',
+        confidence: 0.91,
+        relevance: 0.85,
+        topicSentiment: 'positive',
+        keywords: ['interface', 'features', 'intuitive', 'needed'],
+        hierarchy: ['software', 'mobile_apps', 'features']
+      },
+      {
+        name: 'technical_issues',
+        confidence: 0.88,
+        relevance: 0.78,
+        topicSentiment: 'negative',
+        keywords: ['crashes', 'bugs', 'update', 'removed'],
+        hierarchy: ['software', 'technical_issues']
+      },
+      {
+        name: 'developer_support',
+        confidence: 0.84,
+        relevance: 0.72,
+        topicSentiment: 'positive',
+        keywords: ['developer', 'support', 'responsive'],
+        hierarchy: ['service', 'technical_support']
+      }
+    ],
+    entities: [
+      {
+        name: 'app',
+        type: 'product',
+        confidence: 0.94,
+        entitySentiment: 'mixed',
+        position: { start: 0, end: 3 },
+        attributes: {
+          quality: 4
+        }
+      },
+      {
+        name: 'interface',
+        type: 'feature',
+        confidence: 0.87,
+        entitySentiment: 'positive',
+        position: { start: 15, end: 25 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: 'bugs',
+        type: 'feature',
+        confidence: 0.82,
+        entitySentiment: 'negative',
+        position: { start: 120, end: 124 }
+      }
+    ],
+    intent: {
+      primary: 'feedback',
+      secondary: ['praise', 'complaint'],
+      confidence: 0.91,
+      intensity: 'moderate'
+    },
+    emotions: [
+      {
+        emotion: 'satisfaction',
+        confidence: 0.79,
+        intensity: 0.75,
+        position: { start: 0, end: 40 }
+      },
+      {
+        emotion: 'frustration',
+        confidence: 0.76,
+        intensity: 0.70,
+        position: { start: 60, end: 90 }
+      },
+      {
+        emotion: 'hope',
+        confidence: 0.68,
+        intensity: 0.65,
+        position: { start: 130, end: 150 }
+      }
+    ],
+    confidence: 0.90,
+    processingTime: 1350,
+    timestamp: new Date('2024-01-12T08:16:35Z')
+  },
+
+  // Result for review_005 (Question/Inquiry)
+  {
+    id: 'classification_005',
+    reviewInput: mockReviewInputs[4],
+    sentiment: {
+      primary: 'neutral',
+      secondary: [],
+      score: 0.08,
+      confidence: 0.92,
+      intensity: 'mild',
+      polarity: {
+        positive: 0.10,
+        negative: 0.05,
+        neutral: 0.80,
+        mixed: 0.05
+      }
+    },
+    topics: [
+      {
+        name: 'warranty_inquiry',
+        confidence: 0.94,
+        relevance: 0.88,
+        topicSentiment: 'neutral',
+        keywords: ['warranty', 'covered', 'goes wrong'],
+        hierarchy: ['product_support', 'warranty']
+      },
+      {
+        name: 'return_policy',
+        confidence: 0.89,
+        relevance: 0.82,
+        topicSentiment: 'neutral',
+        keywords: ['return policy', 'information'],
+        hierarchy: ['customer_service', 'returns']
+      },
+      {
+        name: 'purchase_consideration',
+        confidence: 0.85,
+        relevance: 0.76,
+        topicSentiment: 'neutral',
+        keywords: ['interested', 'buying', 'make sure'],
+        hierarchy: ['purchase', 'decision_making']
+      }
+    ],
+    entities: [
+      {
+        name: 'warranty',
+        type: 'service',
+        confidence: 0.91,
+        entitySentiment: 'neutral',
+        position: { start: 15, end: 23 }
+      },
+      {
+        name: 'return policy',
+        type: 'service',
+        confidence: 0.88,
+        entitySentiment: 'neutral',
+        position: { start: 80, end: 93 }
+      },
+      {
+        name: 'product',
+        type: 'product',
+        confidence: 0.85,
+        entitySentiment: 'neutral',
+        position: { start: 45, end: 52 }
+      }
+    ],
+    intent: {
+      primary: 'question',
+      secondary: ['request'],
+      confidence: 0.94,
+      intensity: 'moderate'
+    },
+    emotions: [
+      {
+        emotion: 'anticipation',
+        confidence: 0.72,
+        intensity: 0.68,
+        position: { start: 0, end: 30 }
+      },
+      {
+        emotion: 'trust',
+        confidence: 0.65,
+        intensity: 0.60,
+        position: { start: 100, end: 120 }
+      }
+    ],
+    confidence: 0.93,
+    processingTime: 980,
+    timestamp: new Date('2024-01-11T12:01:15Z')
+  },
+
+  // Result for review_006 (Strong positive with emotions)
+  {
+    id: 'classification_006',
+    reviewInput: mockReviewInputs[5],
+    sentiment: {
+      primary: 'positive',
+      secondary: ['excited'],
+      score: 0.98,
+      confidence: 0.98,
+      intensity: 'extreme',
+      polarity: {
+        positive: 0.98,
+        negative: 0.01,
+        neutral: 0.01,
+        mixed: 0.00
+      }
+    },
+    topics: [
+      {
+        name: 'product_satisfaction',
+        confidence: 0.96,
+        relevance: 0.92,
+        topicSentiment: 'positive',
+        keywords: ['thrilled', 'exceeded expectations', 'amazing', 'happier'],
+        hierarchy: ['customer_satisfaction', 'product_evaluation']
+      },
+      {
+        name: 'customer_service_excellence',
+        confidence: 0.93,
+        relevance: 0.88,
+        topicSentiment: 'positive',
+        keywords: ['customer service', 'above and beyond', 'help'],
+        hierarchy: ['service', 'customer_support']
+      },
+      {
+        name: 'gratitude',
+        confidence: 0.89,
+        relevance: 0.85,
+        topicSentiment: 'positive',
+        keywords: ['thank you', 'amazing product'],
+        hierarchy: ['emotions', 'gratitude']
+      }
+    ],
+    entities: [
+      {
+        name: 'purchase',
+        type: 'product',
+        confidence: 0.94,
+        entitySentiment: 'positive',
+        position: { start: 25, end: 33 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: 'customer service team',
+        type: 'service',
+        confidence: 0.91,
+        entitySentiment: 'positive',
+        position: { start: 60, end: 80 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: 'product',
+        type: 'product',
+        confidence: 0.88,
+        entitySentiment: 'positive',
+        position: { start: 140, end: 147 },
+        attributes: {
+          quality: 5
+        }
+      }
+    ],
+    intent: {
+      primary: 'praise',
+      secondary: ['gratitude'],
+      confidence: 0.96,
+      intensity: 'strong'
+    },
+    emotions: [
+      {
+        emotion: 'joy',
+        confidence: 0.95,
+        intensity: 0.92,
+        position: { start: 0, end: 20 }
+      },
+      {
+        emotion: 'excitement',
+        confidence: 0.91,
+        intensity: 0.88,
+        position: { start: 20, end: 50 }
+      },
+      {
+        emotion: 'gratitude',
+        confidence: 0.89,
+        intensity: 0.85,
+        position: { start: 120, end: 150 }
+      }
+    ],
+    confidence: 0.97,
+    processingTime: 1100,
+    timestamp: new Date('2024-01-10T16:31:10Z')
+  },
+
+  // Result for review_007 (Complaint with shipping issues)
+  {
+    id: 'classification_007',
+    reviewInput: mockReviewInputs[6],
+    sentiment: {
+      primary: 'negative',
+      secondary: ['frustrated'],
+      score: -0.85,
+      confidence: 0.95,
+      intensity: 'strong',
+      polarity: {
+        positive: 0.03,
+        negative: 0.85,
+        neutral: 0.10,
+        mixed: 0.02
+      }
+    },
+    topics: [
+      {
+        name: 'shipping_delays',
+        confidence: 0.94,
+        relevance: 0.89,
+        topicSentiment: 'negative',
+        keywords: ['ordered', 'hasn\'t arrived', 'stuck in transit', '3 weeks'],
+        hierarchy: ['logistics', 'shipping', 'delays']
+      },
+      {
+        name: 'customer_service_issues',
+        confidence: 0.91,
+        relevance: 0.84,
+        topicSentiment: 'negative',
+        keywords: ['called customer service', '5 times', 'can\'t give updates'],
+        hierarchy: ['service', 'customer_support', 'issues']
+      },
+      {
+        name: 'purchase_value',
+        confidence: 0.87,
+        relevance: 0.78,
+        topicSentiment: 'negative',
+        keywords: ['$200 purchase', 'unacceptable'],
+        hierarchy: ['financial', 'purchase_evaluation']
+      }
+    ],
+    entities: [
+      {
+        name: 'December 15th',
+        type: 'time',
+        confidence: 0.93,
+        entitySentiment: 'negative',
+        position: { start: 8, end: 22 }
+      },
+      {
+        name: '3 weeks',
+        type: 'time',
+        confidence: 0.89,
+        entitySentiment: 'negative',
+        position: { start: 70, end: 78 }
+      },
+      {
+        name: 'customer service',
+        type: 'service',
+        confidence: 0.92,
+        entitySentiment: 'negative',
+        position: { start: 90, end: 106 },
+        attributes: {
+          quality: 1
+        }
+      },
+      {
+        name: '$200',
+        type: 'price',
+        confidence: 0.95,
+        entitySentiment: 'negative',
+        position: { start: 140, end: 144 },
+        attributes: {
+          price: {
+            amount: 200,
+            currency: 'USD'
+          }
+        }
+      }
+    ],
+    intent: {
+      primary: 'complaint',
+      secondary: ['warning'],
+      confidence: 0.94,
+      intensity: 'strong'
+    },
+    emotions: [
+      {
+        emotion: 'frustration',
+        confidence: 0.93,
+        intensity: 0.90,
+        position: { start: 0, end: 40 }
+      },
+      {
+        emotion: 'anger',
+        confidence: 0.88,
+        intensity: 0.85,
+        position: { start: 80, end: 120 }
+      },
+      {
+        emotion: 'disappointment',
+        confidence: 0.91,
+        intensity: 0.88,
+        position: { start: 130, end: 150 }
+      }
+    ],
+    confidence: 0.95,
+    processingTime: 1280,
+    timestamp: new Date('2024-01-09T14:21:28Z')
+  },
+
+  // Result for review_008 (Comparison review)
+  {
+    id: 'classification_008',
+    reviewInput: mockReviewInputs[7],
+    sentiment: {
+      primary: 'positive',
+      secondary: ['confident'],
+      score: 0.88,
+      confidence: 0.93,
+      intensity: 'strong',
+      polarity: {
+        positive: 0.88,
+        negative: 0.08,
+        neutral: 0.03,
+        mixed: 0.01
+      }
+    },
+    topics: [
+      {
+        name: 'product_comparison',
+        confidence: 0.95,
+        relevance: 0.91,
+        topicSentiment: 'positive',
+        keywords: ['compared', 'competitor', 'wins', 'better', 'recommend'],
+        hierarchy: ['product_evaluation', 'comparison']
+      },
+      {
+        name: 'product_features',
+        confidence: 0.89,
+        relevance: 0.84,
+        topicSentiment: 'positive',
+        keywords: ['battery life', 'features', 'performance'],
+        hierarchy: ['product', 'features']
+      },
+      {
+        name: 'pricing_advantage',
+        confidence: 0.86,
+        relevance: 0.78,
+        topicSentiment: 'positive',
+        keywords: ['price', 'lower', 'worth it'],
+        hierarchy: ['financial', 'pricing', 'value']
+      }
+    ],
+    entities: [
+      {
+        name: 'competitor model',
+        type: 'product',
+        confidence: 0.88,
+        entitySentiment: 'negative',
+        position: { start: 15, end: 32 }
+      },
+      {
+        name: 'battery life',
+        type: 'feature',
+        confidence: 0.91,
+        entitySentiment: 'positive',
+        position: { start: 45, end: 57 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: 'features',
+        type: 'feature',
+        confidence: 0.87,
+        entitySentiment: 'positive',
+        position: { start: 60, end: 68 },
+        attributes: {
+          quality: 5
+        }
+      },
+      {
+        name: 'price',
+        type: 'price',
+        confidence: 0.84,
+        entitySentiment: 'positive',
+        position: { start: 75, end: 80 }
+      },
+      {
+        name: 'size',
+        type: 'feature',
+        confidence: 0.82,
+        entitySentiment: 'negative',
+        position: { start: 85, end: 89 },
+        attributes: {
+          condition: 'larger'
+        }
+      }
+    ],
+    intent: {
+      primary: 'recommendation',
+      secondary: ['comparison'],
+      confidence: 0.92,
+      intensity: 'strong'
+    },
+    emotions: [
+      {
+        emotion: 'confidence',
+        confidence: 0.89,
+        intensity: 0.85,
+        position: { start: 0, end: 30 }
+      },
+      {
+        emotion: 'satisfaction',
+        confidence: 0.86,
+        intensity: 0.82,
+        position: { start: 60, end: 90 }
+      },
+      {
+        emotion: 'enthusiasm',
+        confidence: 0.83,
+        intensity: 0.80,
+        position: { start: 120, end: 150 }
+      }
+    ],
+    confidence: 0.94,
+    processingTime: 1380,
+    timestamp: new Date('2024-01-08T11:46:18Z')
+  }
+];
+
+// ============================================================================
+// UTILITY FUNCTIONS FOR MOCK DATA
+// ============================================================================
+
+/**
+ * Generate a random review classification result
+ * Useful for testing and development
+ */
+export function generateRandomClassificationResult(
+  reviewInput: ReviewInput
+): ReviewClassificationResult {
+  const sentimentTypes: SentimentType[] = ['positive', 'negative', 'neutral', 'mixed'];
+  const intentTypes: IntentType[] = ['complaint', 'praise', 'question', 'recommendation', 'warning', 'comparison', 'request', 'feedback', 'review'];
+  const emotionTypes: EmotionType[] = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust', 'trust', 'anticipation', 'frustration', 'satisfaction', 'disappointment', 'excitement'];
+  
+  const randomSentiment = sentimentTypes[Math.floor(Math.random() * sentimentTypes.length)];
+  const randomIntent = intentTypes[Math.floor(Math.random() * intentTypes.length)];
+  const randomEmotion = emotionTypes[Math.floor(Math.random() * emotionTypes.length)];
+  
+  return {
+    id: `classification_${Date.now()}`,
+    reviewInput,
+    sentiment: {
+      primary: randomSentiment,
+      score: randomSentiment === 'positive' ? Math.random() * 0.5 + 0.5 : 
+             randomSentiment === 'negative' ? Math.random() * -0.5 - 0.5 : 
+             Math.random() * 0.2 - 0.1,
+      confidence: Math.random() * 0.2 + 0.8,
+      intensity: Math.random() > 0.5 ? 'strong' : 'moderate',
+      polarity: {
+        positive: randomSentiment === 'positive' ? 0.8 : 0.1,
+        negative: randomSentiment === 'negative' ? 0.8 : 0.1,
+        neutral: randomSentiment === 'neutral' ? 0.8 : 0.1,
+        mixed: randomSentiment === 'mixed' ? 0.8 : 0.1
+      }
+    },
+    topics: [
+      {
+        name: 'general_topic',
+        confidence: Math.random() * 0.2 + 0.8,
+        relevance: Math.random() * 0.3 + 0.7,
+        topicSentiment: randomSentiment,
+        keywords: ['keyword1', 'keyword2'],
+        hierarchy: ['category', 'subcategory']
+      }
+    ],
+    entities: [
+      {
+        name: 'sample_entity',
+        type: 'product',
+        confidence: Math.random() * 0.2 + 0.8,
+        entitySentiment: randomSentiment,
+        position: { start: 0, end: 10 }
+      }
+    ],
+    intent: {
+      primary: randomIntent,
+      confidence: Math.random() * 0.2 + 0.8,
+      intensity: Math.random() > 0.5 ? 'strong' : 'moderate'
+    },
+    emotions: [
+      {
+        emotion: randomEmotion,
+        confidence: Math.random() * 0.2 + 0.8,
+        intensity: Math.random() * 0.5 + 0.5
+      }
+    ],
+    confidence: Math.random() * 0.2 + 0.8,
+    processingTime: Math.floor(Math.random() * 1000) + 500,
+    timestamp: new Date()
+  };
+}
+
+/**
+ * Get a specific classification result by review ID
+ */
+export function getClassificationResultByReviewId(reviewId: string): ReviewClassificationResult | undefined {
+  return mockClassificationResults.find(result => result.reviewInput.id === reviewId);
+}
+
+/**
+ * Get all classification results for a specific sentiment type
+ */
+export function getClassificationResultsBySentiment(sentiment: SentimentType): ReviewClassificationResult[] {
+  return mockClassificationResults.filter(result => result.sentiment.primary === sentiment);
+}
+
+/**
+ * Get all classification results for a specific platform
+ */
+export function getClassificationResultsByPlatform(platform: ReviewPlatform): ReviewClassificationResult[] {
+  return mockClassificationResults.filter(result => result.reviewInput.platform === platform);
+}
+
+/**
+ * Get classification results with high confidence (above threshold)
+ */
+export function getHighConfidenceResults(threshold: number = 0.9): ReviewClassificationResult[] {
+  return mockClassificationResults.filter(result => result.confidence >= threshold);
+}
+
+// ============================================================================
+// EXPORT ALL MOCK DATA
+// ============================================================================
+
+export {
+  mockReviewInputs,
+  mockClassificationResults
+}; 
